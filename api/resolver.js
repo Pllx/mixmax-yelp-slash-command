@@ -65,10 +65,10 @@ function handleSearchString(term, req, res) {
   var data = response.body.data;
 
   // Cap at 600px wide
-  var width = data.image_width > 600 ? 600 : data.image_width;
-  var html = '<img style="max-width:100%;" src="' + data.image_url + '" width="' + width + '"/>';
-  res.json({
-    body: html
-    // Add raw:true if you're returning content that you want the user to be able to edit
-  });
+  // var width = data.image_width > 600 ? 600 : data.image_width;
+  // var html = '<img style="max-width:100%;" src="' + data.image_url + '" width="' + width + '"/>';
+  // res.json({
+  //   body: html
+  //   // Add raw:true if you're returning content that you want the user to be able to edit
+  // });
 }
