@@ -20,6 +20,7 @@ module.exports = function(req, res) {
   //if location is undefined, term is parsedTerm[0]
   //if locaton is defined, term is searchInput[0] + "&find_loc="+ searchInput[1]
 
+
   //console.log('Term is',term);
   if (!term) {
     res.json([{
@@ -28,9 +29,6 @@ module.exports = function(req, res) {
     }]);
     return;
   }
-
-  // var test = sync.await(yelp.search({term:'food',location:'Montreal'}, sync.defer()));
-  // console.log('TEST is',test);
 
   var response;
   try {
@@ -41,6 +39,7 @@ module.exports = function(req, res) {
     }, sync.defer()));
     response.statusCode = 200;
   } catch (e) {
+    console.log('ERRORRRR ', e);
     res.status(500).send('Error');
     return;
   }
@@ -53,24 +52,37 @@ module.exports = function(req, res) {
     return;
   }
 
-  console.log('GOT HERE BEETCHES');
-
   var results = _.chain(response.businesses)
     // .reject(function(image) {
     //   return !image || !image.images || !image.images.fixed_height_small;
     // })
     .map(function(listing) {
-      console.log('listing',listing);
+      //console.log('listing',listing);
+      var categories = [];
+      for (var category of listing.categories) {
+        categories.push(category[0])
+      }
       return {
-        title: '<img style="height:75px" src="' + listing.image_url + '">',
-        text: listing.url
+        title: '<div>'+listing.name+'</div>' +
+         // rating stars image
+         '<img style="vertical-align:middle" src="' +
+         listing.rating_img_url +
+         '"> '+
+         // number of reviews
+         '<font style="font-size:12px; font-weight:normal; color:grey">' +
+         listing.review_count + ' Reviews</font> </br>' +
+         // address
+         '<div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"> '+
+         '<font style="font-size:12px;font-weight:normal">' +
+         listing.location.display_address.join(', ') + '</font></div>'+
+         // categories
+         '<font style="font-size:12px; font-weight:normal; color:grey">' +
+         categories.join(', ') +
+         '</font>',
+        text: 'hithere'//listing.url
       };
     })
     .value();
-
-  // var results = response.businesses.map(function(listing) {
-  //   console.log(listing);
-  // });
 
   if (results.length === 0) {
     res.json([{
