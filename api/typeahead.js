@@ -1,7 +1,7 @@
 var key = require('../utils/key');
 var sync = require('synchronize');
 var request = require('request');
-var _ = require('underscore');
+var _ = require('lodash');
 var Yelp = require('yelp');
 
 var yelp = new Yelp({
@@ -44,17 +44,14 @@ module.exports = function(req, res) {
     return;
   }
 
-  var results = _.chain(response.businesses)
-    // .reject(function(image) {
-    //   return !image || !image.images || !image.images.fixed_height_small;
-    // })
-    .map(function(listing) {
-      //console.log('listing',listing);
-      var categories = [];
-      for (var category of listing.categories) {
-        categories.push(category[0])
-      }
-      return {
+  var results = response.businesses.map(function(listing) {
+
+      // removes categorical redundancies e.g:
+      // [[ 'Desserts', 'desserts'], ['Caterers', 'catering']]) -> ['Desserts', 'Caterers']
+      var categories = _.map(listing.categories, '[0]').join(', ');
+      var address = listing.location.display_address.join(', ');
+
+      return { //TODO: use string templates
         title: '<div>'+listing.name+'</div>' +
          // rating stars image
          '<img style="vertical-align:middle" src="' +
@@ -66,15 +63,14 @@ module.exports = function(req, res) {
          // address
          '<div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"> '+
          '<font style="font-size:12px;font-weight:normal">' +
-         listing.location.display_address.join(', ') + '</font></div>'+
+         address + '</font></div>'+
          // categories
          '<font style="font-size:12px; font-weight:normal; color:grey">' +
-         categories.join(', ') +
+         categories + //TODO: move var creation above
          '</font>',
         text: JSON.stringify(listing)
       };
-    })
-    .value();
+    });
 
   if (results.length === 0) {
     res.json([{

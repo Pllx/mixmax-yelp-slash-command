@@ -1,13 +1,14 @@
 var key = require('../utils/key');
 var sync = require('synchronize');
 var request = require('request');
-var _ = require('underscore');
+var _ = require('lodash'); 
 
 
 // The API that returns the in-email representation.
 module.exports = function(req, res) {
   var term = req.query.text.trim();
 
+//TODO: try catch for JSON parse
   // // this should handle if user chose a listing
   if (/^{\S+/.test(term)) {
     handleSelection(JSON.parse(term), req, res);
@@ -21,7 +22,7 @@ function handleSelection(listing, req, res) {
   for (var category of listing.categories) {
     categories.push(category[0])
   }
-  var html =
+  var html = //TODO: use string templates
   '<a style="text-decoration:none; color:inherit; display:block" href="'+listing.url+'">'+
 
   '<div style="width:550px; height: 100px;margin:5px; padding:10px; border: 1px solid #99b0e1; border-radius:2px">'+
@@ -63,3 +64,5 @@ function handleSelection(listing, req, res) {
 function handleSearchString(term, req, res) {
   //currently do nothing if nothing was selected
 }
+
+//TODO: write tests
