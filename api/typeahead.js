@@ -34,7 +34,6 @@ module.exports = function(req, res) {
     }, sync.defer()));
     response.statusCode = 200;
   } catch (e) {
-    console.log('ERROR in typeahead:37 : ', e);
     res.status(500).send('Error');
     return;
   }
@@ -51,23 +50,24 @@ module.exports = function(req, res) {
       var categories = _.map(listing.categories, '[0]').join(', ');
       var address = listing.location.display_address.join(', ');
 
-      return { //TODO: use string templates
-        title: '<div>'+listing.name+'</div>' +
-         // rating stars image
-         '<img style="vertical-align:middle" src="' +
-         listing.rating_img_url +
-         '"> '+
-         // number of reviews
-         '<font style="font-size:12px; font-weight:normal; color:grey">' +
-         listing.review_count + ' Reviews</font> </br>' +
-         // address
-         '<div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"> '+
-         '<font style="font-size:12px;font-weight:normal">' +
-         address + '</font></div>'+
-         // categories
-         '<font style="font-size:12px; font-weight:normal; color:grey">' +
-         categories + //TODO: move var creation above
-         '</font>',
+      var html = `<div>
+      ${listing.name}
+      </div>
+      <img style="vertical-align:middle" src="${listing.rating_img_url}">
+      <font style="font-size:12px; font-weight:normal; color:grey">
+        ${listing.review_count} Reviews
+      </font> </br>
+      <div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        <font style="font-size:12px;font-weight:normal">
+          ${address}
+        </font>
+      </div>
+      <font style="font-size:12px; font-weight:normal; color:grey">
+        ${categories}
+      </font>
+      `
+      return {
+        title: html,
         text: JSON.stringify(listing)
       };
     });
