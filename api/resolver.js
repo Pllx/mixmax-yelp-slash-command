@@ -8,67 +8,58 @@ var _ = require('underscore');
 module.exports = function(req, res) {
   var term = req.query.text.trim();
 
-  if (/^http:\/\/giphy\.com\/\S+/.test(term)) {
-    // Special-case: handle strings in the special URL form that are suggested by the commandHint
-    // API. This is how the command hint menu suggests an exact Giphy image.
-    handleIdString(term.replace(/^http:\/\/giphy\.com\//, ''), req, res);
-  } else {
-    // Else, assume it was a search string.
+  // // this should handle if user chose a listing
+  if (/^{\S+/.test(term)) {
+    handleSelection(JSON.parse(term), req, res);
+  } else { //this should handle if user hit enter with search string without choice
     handleSearchString(term, req, res);
   }
 };
 
-function handleIdString(id, req, res) {
-  var response;
-  try {
-    response = sync.await(request({
-      url: 'http://api.giphy.com/v1/gifs/' + encodeURIComponent(id),
-      qs: {
-        api_key: key
-      },
-      gzip: true,
-      json: true,
-      timeout: 15 * 1000
-    }, sync.defer()));
-  } catch (e) {
-    res.status(500).send('Error');
-    return;
+function handleSelection(listing, req, res) {
+  var categories = [];
+  for (var category of listing.categories) {
+    categories.push(category[0])
   }
+  var html =
+  '<a style="text-decoration:none; color:inherit; display:block" href="'+listing.url+'">'+
 
-  var image = response.body.data.images.original;
-  var width = image.width > 600 ? 600 : image.width;
-  var html = '<img style="max-width:100%;" src="' + image.url + '" width="' + width + '"/>';
+  '<div style="width:550px; height: 100px;margin:5px; padding:10px; border: 1px solid #99b0e1; border-radius:2px">'+
+
+  //image on left div
+  '<div style="display:inline-block; float:left; margin-right:10px"><img style="max-width:90px; max-height:90px" src="'+listing.image_url+'"></div>'+
+
+  //right div
+  '<div style="float:left;">' +
+  '<div style="width:100%">'+listing.name+'</div>' +
+   // rating stars image
+   '<img style="vertical-align:middle" src="' +
+   listing.rating_img_url +
+   '"> '+
+   // number of reviews
+   '<font style="font-size:12px; font-weight:normal; color:grey">' +
+   listing.review_count + ' Reviews</font> </br>' +
+   // address
+   '<div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"> '+
+   '<font style="font-size:14px;font-weight:normal">' +
+   listing.location.display_address.join(', ') + '</font></div>'+
+   // categories
+   '<font style="font-size:14px; font-weight:normal; color:grey">' +
+   categories.join(', ') +
+   '</font>' +
+   '<div style="font-family:proxima-nova, Avenir Next, Segoe UI, Calibri, Helvetica Neue, Helvetica, Arial, sans-serif; font-size:14px; font-weight:normal; color:#aab; margin-top:5px">' +
+   'YELP.COM' +
+   '</div>' +
+   '</div>' + //right div
+
+   '</div>'+
+
+   '</a>';
   res.json({
     body: html
-    // Add raw:true if you're returning content that you want the user to be able to edit
   });
 }
 
 function handleSearchString(term, req, res) {
-  var response;
-  try {
-    response = sync.await(request({
-      url: 'http://api.giphy.com/v1/gifs/random',
-      qs: {
-        tag: term,
-        api_key: key
-      },
-      gzip: true,
-      json: true,
-      timeout: 15 * 1000
-    }, sync.defer()));
-  } catch (e) {
-    res.status(500).send('Error');
-    return;
-  }
-
-  var data = response.body.data;
-
-  // Cap at 600px wide
-  // var width = data.image_width > 600 ? 600 : data.image_width;
-  // var html = '<img style="max-width:100%;" src="' + data.image_url + '" width="' + width + '"/>';
-  // res.json({
-  //   body: html
-  //   // Add raw:true if you're returning content that you want the user to be able to edit
-  // });
+  //currently do nothing if nothing was selected
 }

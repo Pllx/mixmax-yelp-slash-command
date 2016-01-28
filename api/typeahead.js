@@ -13,15 +13,10 @@ var yelp = new Yelp({
 
 // The Type Ahead API.
 module.exports = function(req, res) {
-  var term = req.query.text.trim();
-  var parsedTerm = term.split('@');
-  //console.log(parsedTerm[0], ',',parsedTerm[1]);
+  var term = req.query.text.trim().split('@');
+  var searchQuery = term[0];
+  var locationQuery = term[1];
 
-  //if location is undefined, term is parsedTerm[0]
-  //if locaton is defined, term is searchInput[0] + "&find_loc="+ searchInput[1]
-
-
-  //console.log('Term is',term);
   if (!term) {
     res.json([{
       title: '<i>(enter a search term)</i>',
@@ -33,21 +28,18 @@ module.exports = function(req, res) {
   var response;
   try {
     response = sync.await(yelp.search({
-      term:'food',
-      location:'Montreal',
+      term: searchQuery || 'food',
+      location: locationQuery || 'San Francisco',
       limit: 5
     }, sync.defer()));
     response.statusCode = 200;
   } catch (e) {
-    console.log('ERRORRRR ', e);
+    console.log('ERROR in typeahead:37 : ', e);
     res.status(500).send('Error');
     return;
   }
 
-  console.log('response.businesses:',response.businesses.length);
-
   if (response.statusCode !== 200 || !response.businesses) {
-    console.log('statusCode',response.statusCode);
     res.status(500).send('Error');
     return;
   }
@@ -79,7 +71,7 @@ module.exports = function(req, res) {
          '<font style="font-size:12px; font-weight:normal; color:grey">' +
          categories.join(', ') +
          '</font>',
-        text: 'hithere'//listing.url
+        text: JSON.stringify(listing)
       };
     })
     .value();
