@@ -5,13 +5,20 @@ var _ = require('lodash');
 
 // The API that returns the in-email representation.
 module.exports = function(req, res) {
-  var term = req.query.text.trim();
-
   // if term is JSON, handle the selection. Otherwise, do nothing
   try {
-    handleSelection(JSON.parse(term), req, res);
+    var listing = JSON.parse(req.query.text.trim());
+    if (!listing.categories || !listing.location.display_address ||
+        !listing.url || !listing.image_url || !listing.name ||
+        !listing.rating_img_url || !listing.review_count) {
+          res.sendStatus(400);
+        }
+    else {
+      handleSelection(listing, req, res);
+    }
   } catch (e) {
-    handleSearchString(term, req, res);
+    //TODO: send error
+    res.sendStatus(400);
   }
 };
 
@@ -52,9 +59,3 @@ function handleSelection(listing, req, res) {
     body: html
   });
 }
-
-function handleSearchString(term, req, res) {
-  //currently do nothing if nothing was selected
-}
-
-//TODO: write tests

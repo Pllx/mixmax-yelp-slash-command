@@ -13,11 +13,8 @@ var yelp = new Yelp({
 
 // The Type Ahead API.
 module.exports = function(req, res) {
-  var term = req.query.text.trim().split('@');
-  var searchQuery = term[0];
-  var locationQuery = term[1];
 
-  if (!term) {
+  if (!req.query.text) {
     res.json([{
       title: '<i>(enter a search term)</i>',
       text: ''
@@ -25,7 +22,11 @@ module.exports = function(req, res) {
     return;
   }
 
+  var term = req.query.text.trim().split('@');
+  var searchQuery = term[0];
+  var locationQuery = term[1];
   var response;
+
   try {
     response = sync.await(yelp.search({
       term: searchQuery || 'food',
@@ -68,7 +69,8 @@ module.exports = function(req, res) {
       `
       return {
         title: html,
-        text: JSON.stringify(listing)
+        //TODO: pass listing information to resolver not through text
+        text: JSON.stringify(listing),
       };
     });
 

@@ -20,3 +20,5 @@ app.get('/typeahead', cors(corsOptions), require('./api/typeahead'));
 app.get('/resolver', cors(corsOptions), require('./api/resolver'));
 
 app.listen(process.env.PORT || 9145);
+
+module.exports = app;
