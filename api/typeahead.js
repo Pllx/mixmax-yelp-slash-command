@@ -45,35 +45,7 @@ module.exports = function(req, res) {
   }
 
   // modularize to own function and test
-  var results = response.businesses.map(function(listing) {
-
-      // removes categorical redundancies e.g:
-      // [[ 'Desserts', 'desserts'], ['Caterers', 'catering']]) -> ['Desserts', 'Caterers']
-      var categories = _.map(listing.categories, '[0]').join(', ');
-      var address = listing.location.display_address.join(', ');
-
-      var html = `<div>
-      ${listing.name}
-      </div>
-      <img style="vertical-align:middle" src="${listing.rating_img_url}">
-      <font style="font-size:12px; font-weight:normal; color:grey">
-        ${listing.review_count} Reviews
-      </font> </br>
-      <div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-        <font style="font-size:12px;font-weight:normal">
-          ${address}
-        </font>
-      </div>
-      <font style="font-size:12px; font-weight:normal; color:grey">
-        ${categories}
-      </font>
-      `
-      return {
-        title: html,
-        //TODO: pass listing information to resolver not through text
-        text: JSON.stringify(listing),
-      };
-    });
+  var results = response.businesses.map(generateListingHTML);
 
   if (results.length === 0) {
     res.json([{
@@ -84,3 +56,31 @@ module.exports = function(req, res) {
     res.json(results);
   }
 };
+
+function generateListingHTML(listing) {
+  // removes categorical redundancies e.g:
+  // [[ 'Desserts', 'desserts'], ['Caterers', 'catering']]) -> ['Desserts', 'Caterers']
+  var categories = _.map(listing.categories, '[0]').join(', ');
+  var address = listing.location.display_address.join(', ');
+
+  var html = `<div>
+  ${listing.name}
+  </div>
+  <img style="vertical-align:middle" src="${listing.rating_img_url}">
+  <font style="font-size:12px; font-weight:normal; color:grey">
+    ${listing.review_count} Reviews
+  </font> </br>
+  <div style="width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+    <font style="font-size:12px;font-weight:normal">
+      ${address}
+    </font>
+  </div>
+  <font style="font-size:12px; font-weight:normal; color:grey">
+    ${categories}
+  </font>
+  `;
+  return {
+    title: html,
+    text: JSON.stringify(listing),
+  };
+}

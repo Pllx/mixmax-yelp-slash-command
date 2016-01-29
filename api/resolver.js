@@ -37,7 +37,7 @@ function generateHTML(listing) {
       <div style="display:inline-block; float:left; margin-right:10px">
         <img style="max-width:90px; max-height:90px" src="${listing.image_url}">
       </div>
-      <div style="float:left">
+      <div style="float:left; width:80%">
         <div style="width:100%">
           ${listing.name}
         </div>
