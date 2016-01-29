@@ -12,7 +12,7 @@ var yelp = new Yelp({
 });
 
 // The Type Ahead API.
-module.exports = function(req, res) {
+function typeahead(req, res) {
 
   if (!req.query.text) {
     res.json([{
@@ -44,7 +44,6 @@ module.exports = function(req, res) {
     return;
   }
 
-  // modularize to own function and test
   var results = response.businesses.map(generateListingHTML);
 
   if (results.length === 0) {
@@ -60,6 +59,12 @@ module.exports = function(req, res) {
 function generateListingHTML(listing) {
   // removes categorical redundancies e.g:
   // [[ 'Desserts', 'desserts'], ['Caterers', 'catering']]) -> ['Desserts', 'Caterers']
+
+  if(!listing.categories || !listing.location.display_address ||
+     !listing.name || !listing.review_count) {
+       return null;
+     }
+
   var categories = _.map(listing.categories, '[0]').join(', ');
   var address = listing.location.display_address.join(', ');
 
@@ -84,3 +89,5 @@ function generateListingHTML(listing) {
     text: JSON.stringify(listing),
   };
 }
+
+module.exports = { typeahead: typeahead, generateListingHTML: generateListingHTML};

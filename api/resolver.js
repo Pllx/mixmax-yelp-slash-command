@@ -8,7 +8,7 @@ function resolver(req, res) {
 
   try {
     var listing = JSON.parse(req.query.text.trim());
-    var result = generateHTML(listing);
+    var result = generateResolveHTML(listing);
 
     if (result) {
       return res.json({body: result});
@@ -20,7 +20,7 @@ function resolver(req, res) {
   }
 };
 
-function generateHTML(listing) {
+function generateResolveHTML(listing) {
 
   if (!listing.categories || !listing.location.display_address ||
       !listing.url || !listing.image_url || !listing.name ||
@@ -63,4 +63,4 @@ function generateHTML(listing) {
   return html;
 }
 
-module.exports = { resolver: resolver, generateHTML: generateHTML };
+module.exports = { resolver: resolver, generateResolveHTML: generateResolveHTML };
