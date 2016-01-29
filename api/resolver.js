@@ -6,18 +6,23 @@ var _ = require('lodash');
 // The API that returns the in-email representation.
 module.exports = function(req, res) {
   // if term is JSON, handle the selection. Otherwise, do nothing
+  console.log(req.query);
   try {
     var listing = JSON.parse(req.query.text.trim());
+
+    //move this to handle selection. return null if not valid json
     if (!listing.categories || !listing.location.display_address ||
         !listing.url || !listing.image_url || !listing.name ||
         !listing.rating_img_url || !listing.review_count) {
           res.sendStatus(400);
         }
     else {
+      //pass only listing to handle selection which should return html or null
       handleSelection(listing, req, res);
+      //if not null return res.json(htlm)
+      //otherwise return res.sendStatus(400)
     }
-  } catch (e) {
-    //TODO: send error
+  } catch (e) { //If Non-JSON or invalid JSON
     res.sendStatus(400);
   }
 };

@@ -44,6 +44,7 @@ module.exports = function(req, res) {
     return;
   }
 
+  // modularize to own function and test
   var results = response.businesses.map(function(listing) {
 
       // removes categorical redundancies e.g:
