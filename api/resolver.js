@@ -4,30 +4,30 @@ var request = require('request');
 var _ = require('lodash');
 
 // The API that returns the in-email representation.
-module.exports = function(req, res) {
-  // if term is JSON, handle the selection. Otherwise, do nothing
-  console.log(req.query);
+function resolver(req, res) {
+
   try {
     var listing = JSON.parse(req.query.text.trim());
+    var result = generateHTML(listing);
 
-    //move this to handle selection. return null if not valid json
-    if (!listing.categories || !listing.location.display_address ||
-        !listing.url || !listing.image_url || !listing.name ||
-        !listing.rating_img_url || !listing.review_count) {
-          res.sendStatus(400);
-        }
-    else {
-      //pass only listing to handle selection which should return html or null
-      handleSelection(listing, req, res);
-      //if not null return res.json(htlm)
-      //otherwise return res.sendStatus(400)
+    if (result) {
+      return res.json({body: result});
     }
+    return res.sendStatus(400);
+
   } catch (e) { //If Non-JSON or invalid JSON
-    res.sendStatus(400);
+    return res.sendStatus(400);
   }
 };
 
-function handleSelection(listing, req, res) {
+function generateHTML(listing) {
+
+  if (!listing.categories || !listing.location.display_address ||
+      !listing.url || !listing.image_url || !listing.name ||
+      !listing.rating_img_url || !listing.review_count) {
+        return null;
+      }
+
   var categories = _.map(listing.categories, '[0]').join(', ');
   var address = listing.location.display_address.join(', ');
 
@@ -60,7 +60,7 @@ function handleSelection(listing, req, res) {
     </div>
   </a>
   `
-  res.json({
-    body: html
-  });
+  return html;
 }
+
+module.exports = { resolver: resolver, generateHTML: generateHTML };
