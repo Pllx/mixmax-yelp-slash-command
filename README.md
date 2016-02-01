@@ -2,7 +2,9 @@
 
 This is an open source Yelp Mixmax Slash Command. Use it to quickly find and add a link to a Yelp business in your email.
 
-## Usage
+## Local Usage
+
+In order to use it, first open up the [Mixmax Dashboard](http://sdk.mixmax.com/docs/the-mixmax-dashboard), click Integrations, and click Add Slash Command. 
 
 Command: /yelp [search param] @ [location]
 
