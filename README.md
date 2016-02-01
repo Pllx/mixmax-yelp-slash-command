@@ -2,10 +2,15 @@
 
 This is an open source Yelp Mixmax Slash Command. Use it to quickly find and add a link to a Yelp business in your email.
 
-## Local Usage
+## Running locally
 
-In order to use it, first open up the [Mixmax Dashboard](http://sdk.mixmax.com/docs/the-mixmax-dashboard), click Integrations, and click Add Slash Command. 
+In order to use it, first open up the [Mixmax Dashboard](http://sdk.mixmax.com/docs/the-mixmax-dashboard), click Integrations, and click Add Slash Command. Fill in the form as suggested below:
 
+![addSlashCommand](https://raw.github.com/pllx/mixmax-yelp-slash-command/master/assets/addSlashCommand.png)
+
+Now, start the server by cloning this repo and running `npm install` and `npm start`. You can run the tests using `npm test`. Be sure to provide your Yelp API Keys in utils/key.js.
+
+## Usage
 Command: /yelp [search param] @ [location]
 
 For example, to find 'Chicken rice' near 123 Example street, Los Angeles, simply type:
@@ -22,10 +27,3 @@ Once you've found the listing of your choice, select it by clicking or pressing 
 
 
 ![resolver](https://raw.github.com/pllx/mixmax-yelp-slash-command/master/assets/resolver.png)
-
-
-## Running locally
-
-1. Install using `npm install`
-2. Run using `npm start`
-3. Test using `npm test`
