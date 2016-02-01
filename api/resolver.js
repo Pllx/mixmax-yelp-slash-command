@@ -7,6 +7,7 @@ var _ = require('lodash');
 function resolver(req, res) {
 
   try {
+    // if valid JSON, try to generate HTML of selection
     var listing = JSON.parse(req.query.text.trim());
     var result = generateResolveHTML(listing);
 
@@ -20,8 +21,10 @@ function resolver(req, res) {
   }
 };
 
+// generates HTML of selected listing
 function generateResolveHTML(listing) {
 
+  // check if listing provided is valid
   if (!listing.categories || !listing.location.display_address ||
       !listing.url || !listing.image_url || !listing.name ||
       !listing.rating_img_url || !listing.review_count) {

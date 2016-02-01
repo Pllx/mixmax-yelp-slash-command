@@ -27,6 +27,7 @@ function typeahead(req, res) {
   var locationQuery = term[1];
   var response;
 
+  // term defaults to 'food', whereas location defaults to 'San Francisco'
   try {
     response = sync.await(yelp.search({
       term: searchQuery || 'food',
@@ -44,6 +45,7 @@ function typeahead(req, res) {
     return;
   }
 
+  // creates HTML for all listings
   var results = response.businesses.map(generateListingHTML);
 
   if (results.length === 0) {
@@ -56,15 +58,16 @@ function typeahead(req, res) {
   }
 };
 
+// generates HTML for a single listing
 function generateListingHTML(listing) {
-  // removes categorical redundancies e.g:
-  // [[ 'Desserts', 'desserts'], ['Caterers', 'catering']]) -> ['Desserts', 'Caterers']
 
+  // checks if listing is valid
   if(!listing.categories || !listing.location.display_address ||
      !listing.name || !listing.review_count) {
        return null;
      }
 
+  // Remove redundant/duplicate information for categories
   var categories = _.map(listing.categories, '[0]').join(', ');
   var address = listing.location.display_address.join(', ');
 
